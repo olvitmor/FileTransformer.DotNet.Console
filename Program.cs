@@ -1,5 +1,4 @@
 ﻿using FileTransformer.Services;
-using FileTransformer.Windows;
 using Terminal.Gui;
 
 namespace FileTransformer;
