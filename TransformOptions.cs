@@ -1,22 +1,22 @@
 namespace FileTransformer;
 
-public static class TransformOptions
+public class TransformOptions
 {
-    public static string BasePath { get; private set; }
+    public string BasePath { get; private set; }
 
-    public static bool IncludeSubDirs { get; private set; } = true;
+    public bool IncludeSubDirs { get; private set; } = true;
 
-    public static string[] PatternsFrom { get; private set; }
+    public string[] PatternsFrom { get; private set; }
 
-    public static string[] PatternsTo { get; private set; }
+    public string[] PatternsTo { get; private set; }
 
-    public static string ExtensionFrom { get; private set; }
+    public string ExtensionFrom { get; private set; }
 
-    public static string ExtensionTo { get; private set; }
+    public string ExtensionTo { get; private set; }
 
-    public static bool OptionsApplied { get; private set; }
+    public bool OptionsApplied { get; private set; }
 
-    public static void Apply(string basePath, bool includeSubDirs,
+    public void Apply(string basePath, bool includeSubDirs,
         string[] patternFrom, string[] patternTo, string extensionFrom, string extensionTo)
     {
         BasePath = basePath;

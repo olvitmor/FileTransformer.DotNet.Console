@@ -6,14 +6,9 @@ public class Validator : IValidator
 {
     private readonly IParamValidator[] _optionValidators;
     
-    public Validator()
+    public Validator(IParamValidator[] optionValidators)
     {
-        _optionValidators = new IParamValidator[]
-        {
-            new BasePathValidator(),
-            new PatternsValidator(),
-            new ExtensionValidator()
-        };
+        _optionValidators = optionValidators;
     }
     
     public (bool, string?) Validate(string paramName, string? paramValue)

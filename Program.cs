@@ -1,24 +1,16 @@
-﻿using Terminal.Gui;
+﻿using FileTransformer.Windows;
+using Terminal.Gui;
 
 namespace FileTransformer;
 
-static class Program
+public static class Program
 {
-    static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         Application.Run<MenuWindow>();
         
         Application.Shutdown();
 
         Console.Clear();
-
-        if (TransformOptions.OptionsApplied)
-        {
-            var transformManager = new TransformManager();
-
-            await transformManager.Transform();
-
-            Console.ReadLine();   
-        }
     }
 }

@@ -1,16 +1,18 @@
-namespace FileTransformer;
+using FileTransformer.Interfaces;
 
-public class TransformManager
+namespace FileTransformer.Services;
+
+public class TransformService : ITransformService
 {
-    private readonly Logger<TransformManager> _logger = new Logger<TransformManager>();
+    private readonly Logger<TransformService> _logger = new Logger<TransformService>();
     
-    public async Task Transform()
+    public async Task MakeTransformation(TransformOptions options)
     {
         try
         {
             _logger.Log("Starting transformation...");
             
-            var transformedFilesCount = await TransformFilesInDirectory(TransformOptions.BasePath);
+            var transformedFilesCount = await TransformFilesInDirectory(options.BasePath, options);
         
             _logger.Log($"Transformed files count is {transformedFilesCount}");
         }
@@ -20,28 +22,33 @@ public class TransformManager
         }
     }
 
-    private async Task<int> TransformFilesInDirectory(string dirPath)
+    public Task CountFilesToTransform(TransformOptions options)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task<int> TransformFilesInDirectory(string dirPath, TransformOptions options)
     {
         _logger.Log($"--- Starting processing directory '{dirPath}' ---");
         
         var transformedFiles = 0;
         
-        var filesInCurrentDirectory = Directory.GetFiles(dirPath, $"*{TransformOptions.ExtensionFrom}");
+        var filesInCurrentDirectory = Directory.GetFiles(dirPath, $"*{options.ExtensionFrom}");
 
         foreach (var fileName in filesInCurrentDirectory)
         {
-            await TransformFile(fileName);
+            await TransformFile(fileName, options);
         }
 
         transformedFiles += filesInCurrentDirectory.Length;
 
-        if (TransformOptions.IncludeSubDirs)
+        if (options.IncludeSubDirs)
         {
             var subDirs = Directory.GetDirectories(dirPath);
 
             foreach (var subDir in subDirs)
             {
-                transformedFiles += await TransformFilesInDirectory(subDir);
+                transformedFiles += await TransformFilesInDirectory(subDir, options);
             }
         }
         
@@ -50,11 +57,11 @@ public class TransformManager
         return transformedFiles;
     }
 
-    private async Task TransformFile(string filePath)
+    private async Task TransformFile(string filePath, TransformOptions options)
     {
         _logger.Log($"  --- Processing file '{filePath}' ---");
 
-        var newFilePath = filePath.Replace(TransformOptions.ExtensionFrom, TransformOptions.ExtensionTo);
+        var newFilePath = filePath.Replace(options.ExtensionFrom, options.ExtensionTo);
 
         using var reader = new StreamReader(filePath);
         await using (var writer = new StreamWriter(newFilePath))
