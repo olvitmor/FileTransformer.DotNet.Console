@@ -22,9 +22,11 @@ public class TransformService : ITransformService
         }
     }
 
-    public Task CountFilesToTransform(TransformOptions options)
+    public int CountFilesToTransform(TransformOptions options)
     {
-        throw new NotImplementedException();
+        var searchOptions = options.IncludeSubDirs ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+        return Directory.GetFiles(options.BasePath, $"*{options.ExtensionFrom}", searchOptions).Length;
     }
 
     private async Task<int> TransformFilesInDirectory(string dirPath, TransformOptions options)

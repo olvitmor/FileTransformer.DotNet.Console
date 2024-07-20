@@ -2,19 +2,23 @@ namespace FileTransformer;
 
 public class TransformOptions
 {
-    public string BasePath { get; private set; }
+    public string BasePath { get; set; } = string.Empty;
 
-    public bool IncludeSubDirs { get; private set; } = true;
+    public bool IncludeSubDirs { get;  set; } = true;
 
-    public string[] PatternsFrom { get; private set; }
+    public string PatternsFromString => PatternsFrom is not { Length: > 0 } ? "" : string.Join(";", PatternsFrom);
 
-    public string[] PatternsTo { get; private set; }
+    public string[] PatternsFrom { get;  set; } = [];
+    
+    public string PatternsToString => PatternsTo is not { Length: > 0 } ? "" : string.Join(";", PatternsTo);
 
-    public string ExtensionFrom { get; private set; }
+    public string[] PatternsTo { get;  set; } = [];
 
-    public string ExtensionTo { get; private set; }
+    public string ExtensionFrom { get;  set; } = string.Empty;
 
-    public bool OptionsApplied { get; private set; }
+    public string ExtensionTo { get;  set; } = string.Empty;
+    
+    public bool SaveLogs { get;  set; }
 
     public void Apply(string basePath, bool includeSubDirs,
         string[] patternFrom, string[] patternTo, string extensionFrom, string extensionTo)
@@ -25,6 +29,5 @@ public class TransformOptions
         PatternsTo = patternTo;
         ExtensionFrom = extensionFrom;
         ExtensionTo = extensionTo;
-        OptionsApplied = true;
     }
 }

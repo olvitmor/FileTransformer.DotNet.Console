@@ -1,5 +1,4 @@
 using FileTransformer.Interfaces;
-using FileTransformer.Validators;
 using Terminal.Gui;
 
 namespace FileTransformer.Windows;
@@ -8,33 +7,36 @@ public class MenuWindow : Window
 {
     private readonly TransformOptions _options;
     private readonly ITransformService _transformService;
+    private readonly IOptionsHandlerService _optionsHandlerService;
 
-    public MenuWindow(TransformOptions options, ITransformService transformService)
+    public MenuWindow(TransformOptions options, ITransformService transformService,
+        IOptionsHandlerService optionsHandlerService)
     {
         _options = options;
         _transformService = transformService;
+        _optionsHandlerService = optionsHandlerService;
 
         Title = "File transformer App (Ctrl+Q to quit)";
 
-        var (basePathLabel, basePathText) = CreateLabelAndTextField("Base folder path:", "");
+        var (basePathLabel, basePathText) = CreateLabelAndTextField("Base folder path:", options.BasePath);
 
-        var (includeSubDirsLabel, includeSubDirsText) = CreateLabelAndTextField("Include sub directories (y):",
-            "", basePathLabel, basePathText);
+        var (includeSubDirsLabel, includeSubDirsText) = CreateLabelAndTextField("Include sub directories (true/false):",
+            options.IncludeSubDirs.ToString(), basePathLabel, basePathText);
 
         var (patternFromLabel, patternFromText) =
-            CreateLabelAndTextField("Pattern FROM:", "", includeSubDirsLabel, includeSubDirsText);
+            CreateLabelAndTextField("Patterns FROM:", options.PatternsFromString, includeSubDirsLabel, includeSubDirsText);
 
         var (patternToLabel, patternToText) =
-            CreateLabelAndTextField("Pattern TO:", "", patternFromLabel, patternFromText);
+            CreateLabelAndTextField("Patterns TO:", options.PatternsToString, patternFromLabel, patternFromText);
 
         var (extensionFromLabel, extensionFromText) =
-            CreateLabelAndTextField("Extension FROM:", "", patternToLabel, patternToText);
+            CreateLabelAndTextField("Extension FROM:", options.ExtensionFrom, patternToLabel, patternToText);
 
         var (extensionToLabel, extensionToText) =
-            CreateLabelAndTextField("Extension TO:", "", extensionFromLabel, extensionFromText);
+            CreateLabelAndTextField("Extension TO:", options.ExtensionTo, extensionFromLabel, extensionFromText);
 
         var (saveLogsLabel, saveLogsText) =
-            CreateLabelAndTextField("Save logs (y):", "", extensionToLabel, extensionToText);
+            CreateLabelAndTextField("Save logs (true/false):", options.SaveLogs.ToString(), extensionToLabel, extensionToText);
 
         var btnExecute = new Button()
         {
@@ -52,7 +54,8 @@ public class MenuWindow : Window
         };
 
         btnExecute.Clicked += async () =>
-            await OnBtnExecuteClicked(basePathText, patternFromText, patternToText, extensionFromText, extensionToText);
+            await OnBtnExecuteClicked(basePathText, includeSubDirsText, patternFromText, patternToText,
+                extensionFromText, extensionToText, saveLogsText);
 
         btnHelp.Clicked += OnBtnHelpClicked;
 
@@ -69,110 +72,56 @@ public class MenuWindow : Window
 
     private void OnBtnHelpClicked()
     {
-        MessageBox.Query("Help", 
-@"
+        MessageBox.Query("Help",
+            @"
 Base folder path -  use path to existing folder like 'D:\Files',
 
 Include sub directories -  should the program check subfolders (enabled by default),
 
-Pattern FROM - template for searching for the original substring,
+Patterns FROM - original template (use ';' as separator),
 
-Pattern TO - replacement template,
+Patterns TO - replacement template (use ';' as separator),
 
 Extension FROM - original file extension,
 
 Extension TO - result file extension,
 
-Save logs - save execution logs to file near program
+Save logs - save execution logs to file near program (disabled by default)
 
-",
-            "Ok");
+", "Ok");
     }
 
-    private async Task OnBtnExecuteClicked(TextField basePathText, TextField patternFromText, TextField patternToText,
-        TextField extensionFromText, TextField extensionToText)
+    private async Task OnBtnExecuteClicked(TextField basePathText, TextField includeSubDirsText,
+        TextField patternFromText, TextField patternToText,
+        TextField extensionFromText, TextField extensionToText, TextField saveLogsText)
     {
-        // var basePath = basePathText.Text.ToString();
-        //
-        //     var (isValid, errorMessage) =
-        //         _validator.Validate(nameof(TransformOptions.BasePath), basePath);
-        //
-        //     if (!isValid)
-        //     {
-        //         MessageBox.ErrorQuery($"Validation error [{nameof(TransformOptions.BasePath)}]", errorMessage,
-        //             "Ok");
-        //         return;
-        //     }
-        //
-        //     var includeSubDirs = includeSubDirsText.Text.ToLower() == "true";
-        //
-        //     var patternsFrom = (patternFromText.Text.ToString() ?? "").Split(";");
-        //
-        //     // (isValid, errorMessage) =
-        //     //     _validator.Validate(nameof(TransformOptions.PatternsFrom), patternsFrom);
-        //
-        //     if (!isValid)
-        //     {
-        //         MessageBox.ErrorQuery($"Validation error [{nameof(TransformOptions.PatternsFrom)}]", errorMessage,
-        //             "Ok");
-        //         return;
-        //     }
-        //
-        //     var patternTo = patternToText.Text.ToString();
-        //
-        //     (isValid, errorMessage) =
-        //         _validator.Validate(nameof(TransformOptions.PatternsTo), patternTo);
-        //
-        //     if (!isValid)
-        //     {
-        //         MessageBox.ErrorQuery($"Validation error [{nameof(TransformOptions.PatternsTo)}]", errorMessage,
-        //             "Ok");
-        //         return;
-        //     }
-        //
-        //     var patternsTo = patternTo!.Split(";");
-        //
-        //     var extensionFrom = extensionFromText.Text.ToString();
-        //
-        //     (isValid, errorMessage) =
-        //         _validator.Validate(nameof(TransformOptions.ExtensionFrom), extensionFrom);
-        //
-        //     if (!isValid)
-        //     {
-        //         MessageBox.ErrorQuery($"Validation error [{nameof(TransformOptions.ExtensionFrom)}]", errorMessage,
-        //             "Ok");
-        //         return;
-        //     }
-        //
-        //     var extensionTo = extensionToText.Text.ToString();
-        //
-        //     (isValid, errorMessage) =
-        //         _validator.Validate(nameof(TransformOptions.ExtensionTo), extensionTo);
-        //
-        //     if (!isValid)
-        //     {
-        //         MessageBox.ErrorQuery($"Validation error [{nameof(TransformOptions.ExtensionTo)}]", errorMessage,
-        //             "Ok");
-        //         return;
-        //     }
-        //
-        //     TransformOptions.Apply(basePath!,
-        //         includeSubDirs,
-        //         patternsFrom!,
-        //         patternsTo!,
-        //         extensionFrom!,
-        //         extensionTo!);
-        //
-        //     var filesToTransform = GetFilesToTransformCount();
-        //
-        //     var response = MessageBox.Query($"Prompt execution",
-        //         $"About {filesToTransform} files will be transformed, are you confirm?", ["yes", "no"]);
-        //
-        //     if (response == 0)
-        //     {
-        //         Application.RequestStop();
-        //         return;
-        //     }
+        var (isValid, errorTitle, errorMessage) =
+            _optionsHandlerService.TrySetWithValidation(
+                _options,
+                basePathText.Text.ToString(),
+                includeSubDirsText.Text.ToString(),
+                patternFromText.Text.ToString(),
+                patternToText.Text.ToString(),
+                extensionFromText.Text.ToString(),
+                extensionToText.Text.ToString(),
+                saveLogsText.Text.ToString());
+
+        if (!isValid)
+        {
+            MessageBox.ErrorQuery($"Validation error: '{errorTitle}'", errorMessage, "Ok");
+            return;
+        }
+
+        var filesToUpdate = _transformService.CountFilesToTransform(_options);
+        
+        var response = MessageBox.Query($"Prompt execution",
+            $"About {filesToUpdate} files will be transformed, are you confirm?", ["yes", "no"]);
+
+        if (response == 0)
+        {
+            // Application.RequestStop();
+            // return;
+        }
     }
 
     private (Label, TextField) CreateLabelAndTextField(string labelText, string textFieldText, Label? prevLabel = null,

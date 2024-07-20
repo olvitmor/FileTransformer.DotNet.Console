@@ -26,6 +26,6 @@ public class Validator : IValidator
                 return t;
         }
 
-        throw new Exception($"Validator is not registered for parameter: '{paramName}'");
+        return new BaseTextValidator();
     }
 }

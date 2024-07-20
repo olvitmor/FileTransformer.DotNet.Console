@@ -17,6 +17,8 @@ public class FactoryService
 
     private Window? _menuWindow = null;
 
+    private IOptionsHandlerService? _optionsHandlerService = null;
+
     #endregion
 
     #region Constructor
@@ -29,11 +31,21 @@ public class FactoryService
 
     #region Methods
 
+    public IOptionsHandlerService GetOptionsHandlerService()
+    {
+        if (_optionsHandlerService == null)
+        {
+            _optionsHandlerService = new OptionsHandlerService(GetValidator());
+        }
+
+        return _optionsHandlerService;
+    }
+
     public Window GetMenuWindow()
     {
         if (_menuWindow == null)
         {
-            _menuWindow = new MenuWindow(GetOptions(), GetTransformService());
+            _menuWindow = new MenuWindow(GetOptions(), GetTransformService(), GetOptionsHandlerService());
         }
         
         return _menuWindow;
@@ -47,8 +59,7 @@ public class FactoryService
                 new IParamValidator[]
                 {
                     new BasePathValidator(),
-                    new PatternsValidator(),
-                    new ExtensionValidator()
+                    new PatternsValidator()
                 });
         }
 

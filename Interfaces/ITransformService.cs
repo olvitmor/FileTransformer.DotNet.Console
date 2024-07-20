@@ -4,5 +4,5 @@ public interface ITransformService
 {
     public Task MakeTransformation(TransformOptions options);
 
-    public Task CountFilesToTransform(TransformOptions options);
+    public int CountFilesToTransform(TransformOptions options);
 }
