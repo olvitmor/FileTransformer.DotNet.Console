@@ -47,10 +47,10 @@ public class FactoryService
         {
             _menuWindow = new MenuWindow(GetOptions(), GetTransformService(), GetOptionsHandlerService());
         }
-        
+
         return _menuWindow;
     }
-    
+
     public IValidator GetValidator()
     {
         if (_validator == null)
@@ -66,11 +66,23 @@ public class FactoryService
         return _validator;
     }
 
-    public TransformOptions GetOptions()
+    private TransformOptions GetOptions()
     {
         if (_options == null)
         {
+#if DEBUG
+            _options = new TransformOptions()
+            {
+                BasePath = @"D:\Projects\ConsoleApps\FileTransformer\Data",
+                IncludeSubDirs = true,
+                PatternsFrom = ["SN1", "SN2", "SN3"],
+                PatternsTo = ["change_1", "change_2", "change_3"],
+                ExtensionFrom = "WFD",
+                ExtensionTo = "testFileExt"
+            };
+#else
             _options = new TransformOptions();
+#endif
         }
 
         return _options;

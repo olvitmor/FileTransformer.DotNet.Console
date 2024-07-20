@@ -89,7 +89,9 @@ Patterns TO - replacement template (use ';' as separator),
 
 Extension FROM - original file extension,
 
-Extension TO - result file extension
+Extension TO - result file extension,
+
+You can see logs after using the keyboard shortcut CTRL + Q
 
 ", "Ok");
     }
@@ -126,6 +128,10 @@ Extension TO - result file extension
             if (!isSuccess)
             {
                 MessageBox.ErrorQuery("An error occurred during execution, use the logs to track", errorMessage, "Ok");
+            }
+            else
+            {
+                MessageBox.Query("Success", $"{filesToUpdate} files was updated", "Ok");
             }
         }
     }

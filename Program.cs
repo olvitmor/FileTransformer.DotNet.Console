@@ -18,6 +18,7 @@ public static class Program
         
         Application.Shutdown();
 
-        Console.ReadKey();
+        Console.WriteLine("Press ENTER to close this window...");
+        Console.ReadLine();
     }
 }
