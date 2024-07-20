@@ -6,7 +6,7 @@ public class OptionsHandlerService(IValidator validator) : IOptionsHandlerServic
 {
     public (bool, string?, string?) TrySetWithValidation(TransformOptions options, string? basePathText,
         string? includeSubDirsText, string? patternFromText, string? patternToText, string? extensionFromText,
-        string? extensionToText, string? saveLogsText)
+        string? extensionToText)
     {
         var (isValid, errorMessage) = validator.Validate(nameof(TransformOptions.BasePath), basePathText);
         if (!isValid) return (false, nameof(TransformOptions.BasePath), errorMessage);
@@ -39,8 +39,6 @@ public class OptionsHandlerService(IValidator validator) : IOptionsHandlerServic
 
         options.ExtensionTo = extensionToText!.StartsWith($".") ? extensionToText : $".{extensionToText}";
 
-        options.SaveLogs = saveLogsText?.ToLower() == "true";
-        
         return (true, null, null);
     }
 

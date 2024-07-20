@@ -80,7 +80,7 @@ public class FactoryService
     {
         if (_transformService == null)
         {
-            _transformService = new TransformService();
+            _transformService = new TransformService(new Logger<TransformService>());
         }
 
         return _transformService;

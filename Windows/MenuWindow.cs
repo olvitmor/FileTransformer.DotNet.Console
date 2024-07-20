@@ -3,7 +3,7 @@ using Terminal.Gui;
 
 namespace FileTransformer.Windows;
 
-public class MenuWindow : Window
+public sealed class MenuWindow : Window
 {
     private readonly TransformOptions _options;
     private readonly ITransformService _transformService;
@@ -15,6 +15,15 @@ public class MenuWindow : Window
         _options = options;
         _transformService = transformService;
         _optionsHandlerService = optionsHandlerService;
+        
+        ColorScheme = new Terminal.Gui.ColorScheme
+        {
+            Normal = new Terminal.Gui.Attribute(Terminal.Gui.Color.Green, Terminal.Gui.Color.Black),
+            HotNormal = new Terminal.Gui.Attribute(Terminal.Gui.Color.BrightGreen, Terminal.Gui.Color.Black),
+            Focus = new Terminal.Gui.Attribute(Terminal.Gui.Color.White, Terminal.Gui.Color.Black),
+            HotFocus = new Terminal.Gui.Attribute(Terminal.Gui.Color.BrightGreen, Terminal.Gui.Color.Magenta),
+            Disabled = new Terminal.Gui.Attribute(Terminal.Gui.Color.Gray, Terminal.Gui.Color.Black)
+        };
 
         Title = "File transformer App (Ctrl+Q to quit)";
 
@@ -35,13 +44,10 @@ public class MenuWindow : Window
         var (extensionToLabel, extensionToText) =
             CreateLabelAndTextField("Extension TO:", options.ExtensionTo, extensionFromLabel, extensionFromText);
 
-        var (saveLogsLabel, saveLogsText) =
-            CreateLabelAndTextField("Save logs (true/false):", options.SaveLogs.ToString(), extensionToLabel, extensionToText);
-
         var btnExecute = new Button()
         {
             Text = "Execute",
-            Y = Pos.Bottom(saveLogsLabel) + 1,
+            Y = Pos.Bottom(extensionToLabel) + 1,
             X = Pos.Center(),
             IsDefault = true
         };
@@ -55,7 +61,7 @@ public class MenuWindow : Window
 
         btnExecute.Clicked += async () =>
             await OnBtnExecuteClicked(basePathText, includeSubDirsText, patternFromText, patternToText,
-                extensionFromText, extensionToText, saveLogsText);
+                extensionFromText, extensionToText);
 
         btnHelp.Clicked += OnBtnHelpClicked;
 
@@ -66,7 +72,6 @@ public class MenuWindow : Window
             patternToLabel, patternToText,
             extensionFromLabel, extensionFromText,
             extensionToLabel, extensionToText,
-            saveLogsLabel, saveLogsText,
             btnExecute, btnHelp);
     }
 
@@ -84,16 +89,14 @@ Patterns TO - replacement template (use ';' as separator),
 
 Extension FROM - original file extension,
 
-Extension TO - result file extension,
-
-Save logs - save execution logs to file near program (disabled by default)
+Extension TO - result file extension
 
 ", "Ok");
     }
 
     private async Task OnBtnExecuteClicked(TextField basePathText, TextField includeSubDirsText,
         TextField patternFromText, TextField patternToText,
-        TextField extensionFromText, TextField extensionToText, TextField saveLogsText)
+        TextField extensionFromText, TextField extensionToText)
     {
         var (isValid, errorTitle, errorMessage) =
             _optionsHandlerService.TrySetWithValidation(
@@ -103,8 +106,7 @@ Save logs - save execution logs to file near program (disabled by default)
                 patternFromText.Text.ToString(),
                 patternToText.Text.ToString(),
                 extensionFromText.Text.ToString(),
-                extensionToText.Text.ToString(),
-                saveLogsText.Text.ToString());
+                extensionToText.Text.ToString());
 
         if (!isValid)
         {

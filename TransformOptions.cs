@@ -17,17 +17,4 @@ public class TransformOptions
     public string ExtensionFrom { get;  set; } = string.Empty;
 
     public string ExtensionTo { get;  set; } = string.Empty;
-    
-    public bool SaveLogs { get;  set; }
-
-    public void Apply(string basePath, bool includeSubDirs,
-        string[] patternFrom, string[] patternTo, string extensionFrom, string extensionTo)
-    {
-        BasePath = basePath;
-        IncludeSubDirs = includeSubDirs;
-        PatternsFrom = patternFrom;
-        PatternsTo = patternTo;
-        ExtensionFrom = extensionFrom;
-        ExtensionTo = extensionTo;
-    }
 }

@@ -18,5 +18,7 @@ public static class Program
         }
         
         Application.Shutdown();
+
+        Console.ReadKey();
     }
 }

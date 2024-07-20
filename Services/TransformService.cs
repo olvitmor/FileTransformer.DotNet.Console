@@ -2,39 +2,26 @@ using FileTransformer.Interfaces;
 
 namespace FileTransformer.Services;
 
-public class TransformService : ITransformService
+public class TransformService(ILogger<TransformService> logger) : ITransformService
 {
-    private Logger<TransformService>? _logger = null;
-    
     public async Task<bool> MakeTransformation(TransformOptions options)
     {
-        if (options.SaveLogs)
-        {
-            _logger = new Logger<TransformService>();
-        }
-        
         try
         {
-            _logger?.Log("Starting transformation...");
+            logger.Log("Starting transformation...");
 
             var filesToTransform = GetFilesToTransform(options);
-            
+
             foreach (var filePath in filesToTransform)
             {
                 await TransformFile(filePath, options);
             }
-        
-            _logger?.Log($"Transformed files count is {filesToTransform.Length}");
-            
-            if (options.SaveLogs)
-            {
-                _logger?.SaveLogs();
-                _logger?.Dispose();
-            }
+
+            logger.Log($"Transformed files count is {filesToTransform.Length}");
         }
         catch (Exception ex)
         {
-            _logger?.Log($"Error occured: {ex.Message}");
+            logger.Log($"Error occured: {ex.Message}");
             return false;
         }
 
@@ -52,28 +39,27 @@ public class TransformService : ITransformService
 
     private async Task TransformFile(string filePath, TransformOptions options)
     {
-        _logger?.Log($"  --- Processing file '{filePath}' ---");
+        logger.Log($"--- Processing file '{filePath}' ---");
 
         var newFilePath = filePath.Replace(options.ExtensionFrom, options.ExtensionTo);
 
         using var reader = new StreamReader(filePath);
-        await using (var writer = new StreamWriter(newFilePath))
+        await using var writer = new StreamWriter(newFilePath) ;
+        while (!reader.EndOfStream)
         {
-            while (!reader.EndOfStream)
+            var line = await reader.ReadLineAsync();
+
+            for (var i = 0; i < options.PatternsFrom.Length; i++)
             {
-                var line = await reader.ReadLineAsync();
-
-                for (var i = 0; i < options.PatternsFrom.Length; i++)
-                {
-                    line = line?.Replace(options.PatternsFrom[i], options.PatternsTo[i]);
-                }
-
-                await writer.WriteLineAsync(line);
+                line = line?.Replace(options.PatternsFrom[i], options.PatternsTo[i]);
             }
 
-            await writer.FlushAsync();
+            await writer.WriteLineAsync(line);
         }
-
+        await writer.FlushAsync();
+        writer.Close();
         reader.Close();
+        
+        logger.Log($"--- Completed processing file ---");
     }
 }
