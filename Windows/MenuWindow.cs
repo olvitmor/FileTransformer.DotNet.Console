@@ -8,12 +8,12 @@ public class MenuWindow : Window
 {
     private readonly TransformOptions _options;
     private readonly ITransformService _transformService;
-    
+
     public MenuWindow(TransformOptions options, ITransformService transformService)
     {
         _options = options;
         _transformService = transformService;
-        
+
         Title = "File transformer App (Ctrl+Q to quit)";
 
         var (basePathLabel, basePathText) = CreateLabelAndTextField("Base folder path:", "");
@@ -62,19 +62,36 @@ public class MenuWindow : Window
             patternFromLabel, patternFromText,
             patternToLabel, patternToText,
             extensionFromLabel, extensionFromText,
-            extensionToLabel, extensionToText, 
+            extensionToLabel, extensionToText,
             saveLogsLabel, saveLogsText,
             btnExecute, btnHelp);
     }
 
     private void OnBtnHelpClicked()
     {
+        MessageBox.Query("Help", 
+@"
+Base folder path -  use path to existing folder like 'D:\Files',
+
+Include sub directories -  should the program check subfolders (enabled by default),
+
+Pattern FROM - template for searching for the original substring,
+
+Pattern TO - replacement template,
+
+Extension FROM - original file extension,
+
+Extension TO - result file extension,
+
+Save logs - save execution logs to file near program
+
+",
+            "Ok");
     }
 
     private async Task OnBtnExecuteClicked(TextField basePathText, TextField patternFromText, TextField patternToText,
         TextField extensionFromText, TextField extensionToText)
     {
-        
         // var basePath = basePathText.Text.ToString();
         //
         //     var (isValid, errorMessage) =
