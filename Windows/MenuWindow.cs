@@ -6,8 +6,14 @@ namespace FileTransformer.Windows;
 
 public class MenuWindow : Window
 {
-    public MenuWindow()
+    private readonly TransformOptions _options;
+    private readonly ITransformService _transformService;
+    
+    public MenuWindow(TransformOptions options, ITransformService transformService)
     {
+        _options = options;
+        _transformService = transformService;
+        
         Title = "File transformer App (Ctrl+Q to quit)";
 
         var (basePathLabel, basePathText) = CreateLabelAndTextField("Base folder path:", "");
@@ -27,10 +33,13 @@ public class MenuWindow : Window
         var (extensionToLabel, extensionToText) =
             CreateLabelAndTextField("Extension TO:", "", extensionFromLabel, extensionFromText);
 
+        var (saveLogsLabel, saveLogsText) =
+            CreateLabelAndTextField("Save logs (y):", "", extensionToLabel, extensionToText);
+
         var btnExecute = new Button()
         {
             Text = "Execute",
-            Y = Pos.Bottom(extensionToText) + 1,
+            Y = Pos.Bottom(saveLogsLabel) + 1,
             X = Pos.Center(),
             IsDefault = true
         };
@@ -53,7 +62,8 @@ public class MenuWindow : Window
             patternFromLabel, patternFromText,
             patternToLabel, patternToText,
             extensionFromLabel, extensionFromText,
-            extensionToLabel, extensionToText,
+            extensionToLabel, extensionToText, 
+            saveLogsLabel, saveLogsText,
             btnExecute, btnHelp);
     }
 
@@ -64,6 +74,7 @@ public class MenuWindow : Window
     private async Task OnBtnExecuteClicked(TextField basePathText, TextField patternFromText, TextField patternToText,
         TextField extensionFromText, TextField extensionToText)
     {
+        
         // var basePath = basePathText.Text.ToString();
         //
         //     var (isValid, errorMessage) =
@@ -164,7 +175,7 @@ public class MenuWindow : Window
         var textField = new TextField(textFieldText)
         {
             X = Pos.Right(label) + 1,
-            Width = Dim.Sized(50)
+            Width = Dim.Fill()
         };
 
         if (prevTextField != null)

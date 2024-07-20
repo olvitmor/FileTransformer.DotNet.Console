@@ -1,5 +1,7 @@
 using FileTransformer.Interfaces;
 using FileTransformer.Validators;
+using FileTransformer.Windows;
+using Terminal.Gui;
 
 namespace FileTransformer.Services;
 
@@ -13,6 +15,8 @@ public class FactoryService
 
     private IValidator? _validator = null;
 
+    private Window? _menuWindow = null;
+
     #endregion
 
     #region Constructor
@@ -25,6 +29,16 @@ public class FactoryService
 
     #region Methods
 
+    public Window GetMenuWindow()
+    {
+        if (_menuWindow == null)
+        {
+            _menuWindow = new MenuWindow(GetOptions(), GetTransformService());
+        }
+        
+        return _menuWindow;
+    }
+    
     public IValidator GetValidator()
     {
         if (_validator == null)
