@@ -76,7 +76,7 @@ public class FactoryService
         return _options;
     }
 
-    public ITransformService GetTransformService()
+    private ITransformService GetTransformService()
     {
         if (_transformService == null)
         {

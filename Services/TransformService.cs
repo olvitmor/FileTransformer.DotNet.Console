@@ -4,64 +4,55 @@ namespace FileTransformer.Services;
 
 public class TransformService : ITransformService
 {
-    private readonly Logger<TransformService> _logger = new Logger<TransformService>();
+    private Logger<TransformService>? _logger = null;
     
-    public async Task MakeTransformation(TransformOptions options)
+    public async Task<bool> MakeTransformation(TransformOptions options)
     {
+        if (options.SaveLogs)
+        {
+            _logger = new Logger<TransformService>();
+        }
+        
         try
         {
-            _logger.Log("Starting transformation...");
+            _logger?.Log("Starting transformation...");
+
+            var filesToTransform = GetFilesToTransform(options);
             
-            var transformedFilesCount = await TransformFilesInDirectory(options.BasePath, options);
+            foreach (var filePath in filesToTransform)
+            {
+                await TransformFile(filePath, options);
+            }
         
-            _logger.Log($"Transformed files count is {transformedFilesCount}");
+            _logger?.Log($"Transformed files count is {filesToTransform.Length}");
+            
+            if (options.SaveLogs)
+            {
+                _logger?.SaveLogs();
+                _logger?.Dispose();
+            }
         }
         catch (Exception ex)
         {
-            _logger.Log($"Error occured: {ex.Message}");
+            _logger?.Log($"Error occured: {ex.Message}");
+            return false;
         }
+
+        return true;
     }
 
-    public int CountFilesToTransform(TransformOptions options)
+    private static string[] GetFilesToTransform(TransformOptions options)
     {
         var searchOptions = options.IncludeSubDirs ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-        return Directory.GetFiles(options.BasePath, $"*{options.ExtensionFrom}", searchOptions).Length;
+        return Directory.GetFiles(options.BasePath, $"*{options.ExtensionFrom}", searchOptions);
     }
 
-    private async Task<int> TransformFilesInDirectory(string dirPath, TransformOptions options)
-    {
-        _logger.Log($"--- Starting processing directory '{dirPath}' ---");
-        
-        var transformedFiles = 0;
-        
-        var filesInCurrentDirectory = Directory.GetFiles(dirPath, $"*{options.ExtensionFrom}");
-
-        foreach (var fileName in filesInCurrentDirectory)
-        {
-            await TransformFile(fileName, options);
-        }
-
-        transformedFiles += filesInCurrentDirectory.Length;
-
-        if (options.IncludeSubDirs)
-        {
-            var subDirs = Directory.GetDirectories(dirPath);
-
-            foreach (var subDir in subDirs)
-            {
-                transformedFiles += await TransformFilesInDirectory(subDir, options);
-            }
-        }
-        
-        _logger.Log($"--- Directory '{dirPath}' processing ended ---");
-
-        return transformedFiles;
-    }
+    public int CountFilesToTransform(TransformOptions options) => GetFilesToTransform(options).Length;
 
     private async Task TransformFile(string filePath, TransformOptions options)
     {
-        _logger.Log($"  --- Processing file '{filePath}' ---");
+        _logger?.Log($"  --- Processing file '{filePath}' ---");
 
         var newFilePath = filePath.Replace(options.ExtensionFrom, options.ExtensionTo);
 
@@ -71,8 +62,13 @@ public class TransformService : ITransformService
             while (!reader.EndOfStream)
             {
                 var line = await reader.ReadLineAsync();
-                // var updatedLine = line?.Replace(TransformOptions.PatternsFrom, TransformOptions.PatternsTo);
-                // await writer.WriteLineAsync(updatedLine);
+
+                for (var i = 0; i < options.PatternsFrom.Length; i++)
+                {
+                    line = line?.Replace(options.PatternsFrom[i], options.PatternsTo[i]);
+                }
+
+                await writer.WriteLineAsync(line);
             }
 
             await writer.FlushAsync();

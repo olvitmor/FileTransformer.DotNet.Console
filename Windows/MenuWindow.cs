@@ -119,8 +119,12 @@ Save logs - save execution logs to file near program (disabled by default)
 
         if (response == 0)
         {
-            // Application.RequestStop();
-            // return;
+            var isSuccess = await _transformService.MakeTransformation(_options);
+
+            if (!isSuccess)
+            {
+                MessageBox.ErrorQuery("An error occurred during execution, use the logs to track", errorMessage, "Ok");
+            }
         }
     }
 
