@@ -1,4 +1,4 @@
-namespace FileTransformer.Interfaces;
+namespace FileTransformer.Console.Interfaces;
 
 public interface IValidator
 {

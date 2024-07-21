@@ -1,6 +1,6 @@
-using FileTransformer.Interfaces;
+using FileTransformer.Console.Interfaces;
 
-namespace FileTransformer.Services;
+namespace FileTransformer.Console.Services;
 
 public class OptionsHandlerService(IValidator validator) : IOptionsHandlerService
 {

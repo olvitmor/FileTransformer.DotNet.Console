@@ -1,9 +1,9 @@
-using FileTransformer.Interfaces;
-using FileTransformer.Validators;
-using FileTransformer.Windows;
+using FileTransformer.Console.Interfaces;
+using FileTransformer.Console.Validators;
+using FileTransformer.Console.Windows;
 using Terminal.Gui;
 
-namespace FileTransformer.Services;
+namespace FileTransformer.Console.Services;
 
 public class FactoryService
 {

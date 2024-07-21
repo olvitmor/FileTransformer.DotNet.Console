@@ -1,7 +1,7 @@
-﻿using FileTransformer.Services;
+﻿using FileTransformer.Console.Services;
 using Terminal.Gui;
 
-namespace FileTransformer;
+namespace FileTransformer.Console;
 
 public static class Program
 {
@@ -18,7 +18,7 @@ public static class Program
         
         Application.Shutdown();
 
-        Console.WriteLine("Press ENTER to close this window...");
-        Console.ReadLine();
+        System.Console.WriteLine("Press ENTER to close this window...");
+        System.Console.ReadLine();
     }
 }

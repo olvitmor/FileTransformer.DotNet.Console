@@ -1,7 +1,7 @@
-using FileTransformer.Interfaces;
+using FileTransformer.Console.Interfaces;
 using Terminal.Gui;
 
-namespace FileTransformer.Windows;
+namespace FileTransformer.Console.Windows;
 
 public sealed class MenuWindow : Window
 {

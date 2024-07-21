@@ -1,8 +1,8 @@
-using FileTransformer.Interfaces;
+using FileTransformer.Console.Interfaces;
 
-namespace FileTransformer.Services;
+namespace FileTransformer.Console.Services;
 
 public class LoggerService<T> : ILogger<T>
 {
-    public void Log(string message) =>  Console.WriteLine($"[{DateTime.Now}] [{typeof(T)}] {message}");
+    public void Log(string message) =>  System.Console.WriteLine($"[{DateTime.Now}] [{typeof(T)}] {message}");
 }

@@ -1,6 +1,6 @@
-using FileTransformer.Interfaces;
+using FileTransformer.Console.Interfaces;
 
-namespace FileTransformer.Validators;
+namespace FileTransformer.Console.Validators;
 
 public class BaseTextValidator : IParamValidator
 {
