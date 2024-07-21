@@ -1,4 +1,4 @@
-namespace FileTransformer.Console.Interfaces;
+namespace FileTransformer.DotNet.Console.Interfaces;
 
 public interface IParamValidator
 {

@@ -1,6 +1,6 @@
-using FileTransformer.Console.Interfaces;
+using FileTransformer.DotNet.Console.Interfaces;
 
-namespace FileTransformer.Console.Services;
+namespace FileTransformer.DotNet.Console.Services;
 
 public class TransformService(ILogger<TransformService> logger) : ITransformService
 {

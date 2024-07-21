@@ -1,7 +1,7 @@
-﻿using FileTransformer.Console.Services;
+﻿using FileTransformer.DotNet.Console.Services;
 using Terminal.Gui;
 
-namespace FileTransformer.Console;
+namespace FileTransformer.DotNet.Console;
 
 public static class Program
 {

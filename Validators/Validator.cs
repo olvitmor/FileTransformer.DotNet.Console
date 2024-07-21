@@ -1,6 +1,6 @@
-using FileTransformer.Console.Interfaces;
+using FileTransformer.DotNet.Console.Interfaces;
 
-namespace FileTransformer.Console.Validators;
+namespace FileTransformer.DotNet.Console.Validators;
 
 public class Validator : IValidator
 {

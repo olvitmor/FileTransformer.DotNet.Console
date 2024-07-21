@@ -1,4 +1,4 @@
-namespace FileTransformer.Console;
+namespace FileTransformer.DotNet.Console;
 
 public class TransformOptions
 {
